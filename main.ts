@@ -156,6 +156,8 @@ basic.showIcon(IconNames.Yes)
 
 let READY = false
 let RPIMSG = ""
+let RPIVAL = ""
+let RPITIM = 0.0
 
 basic.forever(function () {
     if (ESerial.available()) {
@@ -163,9 +165,22 @@ basic.forever(function () {
         RPIMSG = ESerial.read()
         if (RPIMSG == "RDY")
             READY = true
-        else
+        else {
+            RPIVAL = ""
+            RPITIM = 0
+            let ix = RPIMSG.indexOf("|")
+            if (ix >= 0) {
+                RPIVAL = RPIMSG.substr(ix + 1)
+                RPIMSG = RPIMSG.substr(0, ix)
+                ix = RPIVAL.indexOf("|")
+                if (ix >= 0) {
+                    RPITIM = parseFloat( RPIVAL.substr(ix + 1))
+                    RPIVAL = RPIVAL.substr(0, ix)
+                }
+            }
             if (mediaHandler)
                 mediaHandler()
+        }
     }
 })
 
@@ -181,9 +196,21 @@ namespace RPiMedia {
         mediaHandler = code
     }
 
+    //% block="duration"
+    //% block.loc.nl="tijdsduur"
+    export function duration(): number {
+        return RPITIM
+    }
+
+    //% block="value"
+    //% block.loc.nl="waarde"
+    export function value(): string {
+        return RPIMSG
+    }
+
     //% block="command"
     //% block.loc.nl="instructie"
-    export function command() : string {
+    export function command(): string {
         return RPIMSG
     }
 
@@ -204,7 +231,7 @@ namespace RPiMedia {
     //% block="show image %name for %time sec."
     //% block.loc.nl="toon afbeelding %name voor %time sec."
     export function showImage(name: string, time: number) {
-        let msg = name + "@" + time.toString()
+        let msg = name + "|" + time.toString()
         ESerial.write(msg)
         READY = false
         while (!READY) basic.pause(1)
