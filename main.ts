@@ -169,7 +169,7 @@ basic.forever(function () {
     }
 })
 
-//% color="#00CC00" icon="\uf1f9"
+//% color="#FF2266" icon="\uf144"
 //% block="RPi Media"
 //% block.loc.nl="RPi Media"
 namespace RPiMedia {
@@ -207,10 +207,11 @@ namespace RPiMedia {
         READY = true
     }
 
-    //% block="show image %name"
-    //% block.loc.nl="toon afbeelding %name"
-    export function showImage(name: string) {
-        ESerial.write(name)
+    //% block="show image %name for %time sec."
+    //% block.loc.nl="toon afbeelding %name voor %time sec."
+    export function showImage(name: string, time: number) {
+        let msg = name + "@" + time.toString()
+        ESerial.write(msg)
         READY = true
     }
 
