@@ -205,7 +205,7 @@ namespace RPiMedia {
     //% block="value"
     //% block.loc.nl="waarde"
     export function value(): string {
-        return RPIMSG
+        return RPIVAL
     }
 
     //% block="command"
