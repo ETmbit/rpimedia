@@ -187,12 +187,6 @@ namespace RPiMedia {
         return RPIMSG
     }
 
-    //% block="wait until video finished"
-    //% block.loc.nl="wacht tot de clip klaar is"
-    export function waitFinished() {
-        while (!READY) basic.pause(1)
-    }
-
     //% block="stop"
     //% block.loc.nl="stop"
     export function stop() {
@@ -212,7 +206,8 @@ namespace RPiMedia {
     export function showImage(name: string, time: number) {
         let msg = name + "@" + time.toString()
         ESerial.write(msg)
-        READY = true
+        READY = false
+        while (!READY) basic.pause(1)
     }
 
     //% block="show video %name"
@@ -220,5 +215,6 @@ namespace RPiMedia {
     export function showVideo(name: string) {
         ESerial.write(name)
         READY = false
+        while (!READY) basic.pause(1)
     }
 }
